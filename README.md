@@ -1,6 +1,6 @@
 AI-Powered Virtual Surveyor for Infrastructure Mapping
 
-![alt text](https://img-shields.io/badge/Python-3.9+-blue?logo=python)
+
 ![alt text](https://img.shields.io/badge/Status-Completed-brightgreen)
 ![alt text](https://img.shields.io/badge/License-MIT-green)
 
