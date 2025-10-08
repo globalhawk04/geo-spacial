@@ -33,7 +33,7 @@ import datetime
 
 
 
-api_key = 'AIzaSyB6ewALDYvM6hdj_di-wG7LbL4LgVk9qKk'
+api_key = ''
 
 filename = 'cleaned_google_waypoints_demo_1.csv'
 
