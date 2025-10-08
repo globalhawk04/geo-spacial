@@ -9,24 +9,15 @@ This project is an end-to-end computer vision and geospatial analysis pipeline t
 The system is designed to replace the slow, expensive, and manual process of physical asset surveying with an automated, scalable, and remote alternative.
 
 Table of Contents
-
 Project Overview
-
 Core Features
-
 Project Pipeline
-
 Technical Deep Dive
-
 Technical Stack
-
 Setup & Installation
-
 Usage
-
 Project Roadmap
 
-Project Overview
 
 Manually surveying and mapping assets like utility poles, fire hydrants, or cell towers is a significant operational challenge. This project was built to solve that problem by leveraging three key technologies:
 
