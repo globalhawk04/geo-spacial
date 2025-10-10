@@ -1,5 +1,5 @@
 AI-Powered Virtual Surveyor for Infrastructure Mapping
-![alt text](https://img-shields.io/badge/Python-3.9+-blue?logo=python)
+
 ![alt text](https://img.shields.io/badge/Status-Completed-brightgreen)
 ![alt text](https://img.shields.io/badge/License-MIT-green)
 
@@ -8,46 +8,72 @@ The system is designed to replace the slow, expensive, and manual process of phy
 
 Project Overview
 Manually surveying and mapping assets like utility poles, fire hydrants, or cell towers is a significant operational challenge. This project was built to solve that problem by leveraging three key technologies:
+
 Geospatial Mathematics: To programmatically generate a high-density "scan path" along any given road or route.
 Google Street View API: To act as the "eyes" of the system, providing a rich, visual dataset of the real world from a driver's perspective.
+
 Custom Object Detection: A fine-tuned DETR (DEtection TRansformer) model that acts as the "brain," capable of identifying specific target objects within the Street View imagery with high accuracy.
 By combining these, the pipeline can take a simple route drawn on Google Maps and produce a detailed CSV file containing the precise predicted latitude and longitude of every utility pole found along that route.
+
 Core Features
+
 Automated Route Interpolation: Generates hundreds of precise GPS waypoints every ~10 meters along a given path using geodesic calculations.
+
 Dynamic Image Acquisition: Systematically calls the Google Street View API at each waypoint, adjusting the camera's heading to scan the environment intelligently.
+
 Custom AI-Powered Detection: Utilizes a custom-trained Hugging Face DETR model for highly accurate object detection (this repository is configured to find utility poles).
+
 Geospatial Triangulation: Implements a novel algorithm to convert a 2D bounding box from an image into a real-world GPS coordinate by estimating distance and angle from the camera.
 Scalable Pipeline: The entire process is scripted in Python, allowing for the analysis of long routes and large areas with minimal manual intervention.
+
 Project Pipeline
+
 The project is structured as a multi-stage data processing pipeline. The scripts are designed to be run in sequence:
+
 Data Ingestion & Cleaning (regex_sep_waypoint.py):
+
 Input: A raw, messy CSV file exported from a hand-drawn route in Google Maps.
 Process: Uses regular expressions to parse the unstructured text and extract a clean list of primary latitude/longitude waypoints.
 Output: A clean CSV (cleaned_google_waypoints_demo_1.csv) that serves as the input for the next stage.
+
 Route Interpolation (way_point_create.py):
 Input: The clean list of primary waypoints.
 Process: Calculates the geodesic path (distance and bearing) between each waypoint. It then interpolates new GPS coordinates at ~10-meter intervals to create a high-resolution scan path.
 Output: A detailed CSV (demo_1_cleaned_way_point_test_florid.csv) containing hundreds of sequential scan points.
+
 Survey & Detection (deploy_model.py / long_test.py):
 Input: The high-resolution scan path.
 Process: This is the core engine. It iterates through each scan point, calls the Google Street View API, runs the object detection model on the resulting image, and performs the geospatial triangulation for any detected objects.
 Output: The final dataset (predicted_lat_and_long.csv), containing the timestamp and predicted GPS coordinates of each successfully identified asset.
 (Note: model_build_first.py contains the script for training the object detection model, and long_test.py is a detailed version of the deployment script used for calibration and testing different parameters.)
 Technical Deep Dive
+
 Object-to-GPS Triangulation
+
 The most complex part of this project is converting a detected object's bounding box into a GPS coordinate. This is achieved through a multi-step calculation within deploy_model.py:
+
 Distance Estimation: The distance to the object is approximated using a pinhole camera model formula: Distance = (Focal Length * Real Object Height) / Object Height in Pixels. This requires calibrating an estimate for the focal length of Google's cameras and the average height of the target object. A multiplier (d_multiply) is used for fine-tuning.
+
 Angle Calculation: The camera's direction of travel (heading) is known from the geodesic calculation. The horizontal position of the bounding box's center relative to the image's center gives an angular offset. The final bearing to the object is heading + angular_offset.
 Coordinate Projection: With a starting point (the camera's GPS), a distance, and a bearing, the Haversine formula is used to project the final latitude and longitude of the detected object.
 
 Usage
 Create and Clean Your Route:
+
 Go to Google My Maps and draw a route in your area of interest.
+
 Export the route as a KML/KMZ file, then convert it to a CSV.
+
 Place this file in the root directory (e.g., as Untitled map- demo_2.csv).
+
 Run the cleaning script: python regex_sep_waypoint.py.
+
 Generate the Scan Path:
+
 Run the interpolation script: python way_point_create.py. This will create the detailed waypoint file.
+
 Deploy the Surveyor:
+
 Run the main deployment script: python deploy_model.py (or long_test.py for more detailed output and parameter tuning).
+
 The script will begin iterating through the waypoints, downloading images, and performing inference. Detected object locations will be saved to the final output CSV.
