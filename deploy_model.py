@@ -107,7 +107,7 @@ df.to_csv('cleaned_way_point_test_florid.csv')
 for take_pic, direction in zip(drive_predicted_location,bearings):
     meta_base = 'https://maps.googleapis.com/maps/api/streetview/metadata?'
     pic_base ='https://maps.googleapis.com/maps/api/streetview?'
-    api_key = 'AIzaSyB6ewALDYvM6hdj_di-wG7LbL4LgVk9qKk'
+    api_key = ''
     fov = '120'
     pitch = '10'
     heading = '90'
